@@ -1,0 +1,33 @@
+ db.todolist.updateMany(
+    { }, // Match all documents or specify a query to match specific documents
+    [
+       {
+          $set: {
+             // Set a new field "newField" with the converted boolean value
+             status: {
+                $convert: {
+                   input: "status", // Specify the existing field to convert
+                   to: "bool", // Convert to boolean type
+                   onError: "status" // Fallback to existing field value if conversion fails
+                }
+             }
+          }
+       }
+    ]
+ )
+
+
+ db.todolist.updateMany(
+   { }, // Match all documents or specify a query to match specific documents
+   { $unset: { "newField": "" } } // Remove the "newField" from documents
+)
+
+ db.todolist.updateMany(
+   { }, // Match all documents or specify a query to match specific documents
+   { $rename: { "newField": "status" } } // Rename the "newField" to "status"
+ )
+ 
+ db.todolist.updateMany(
+   { }, // Match all documents or specify a query to match specific documents
+   { $set: { status : false } } 
+)

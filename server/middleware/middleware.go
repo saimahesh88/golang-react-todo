@@ -91,6 +91,17 @@ func UndoTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(params["id"])
 }
 
+func ToggleStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	params := mux.Vars(r)
+	toggleStatus(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
+}
+
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -153,6 +164,19 @@ func undoTask(task string) {
 	id, _ := primitive.ObjectIDFromHex(task)
 	filter := bson.M{"_id": id}
 	update := bson.M{"$set": bson.M{"status": false}}
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("modified documents count:", result.ModifiedCount)
+}
+
+func toggleStatus(task string) {
+	id, _ := primitive.ObjectIDFromHex(task)
+	filter := bson.M{"_id": id}
+	update := []any{
+		bson.M{"$set": bson.M{"status": bson.M{"$not": "$status"}}},
+	}
 	result, err := collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		log.Fatal(err)

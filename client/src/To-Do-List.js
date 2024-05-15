@@ -22,7 +22,6 @@ class ToDoList extends Component{
         });
     }
 
-    onSubmit
 
     getTask = () =>{
         axios.get(endpoint + "/api/task").then((res) => {
@@ -47,9 +46,9 @@ class ToDoList extends Component{
                                         <Icon
                                         name="check circle" 
                                         color="blue"
-                                        onClick={() => this.updateTask(item._id)}
+                                        onClick={() => this.toggleStatus(item._id)}
                                         />
-                                        <span style={{paddingRight : 10}}>Undo</span>
+                                        <span style={{paddingRight : 10}}>Done</span>
                                         <Icon
                                         name="delete"
                                         color="red"
@@ -70,10 +69,21 @@ class ToDoList extends Component{
         });
     };
 
-    updateTask = (id) => {
-        axios.put(endpoint + "/api/task" + id,{
+    toggleStatus = (id) => {
+        axios.put(endpoint + "/api/task/" + id,{
             headers:{
-                "Content-Type" : "application/x-www-form-urlencoded",
+                "Content-Type" : "application/x-www-form-urlencoded"
+            },
+        }).then((res) => {
+            console.log(res);
+            this.getTask();
+        });
+    }
+
+    updateTask = (id) => {
+        axios.put(endpoint + "/api/task/" + id,{
+            headers:{
+                "Content-Type" : "application/x-www-form-urlencoded"
             },
         }).then((res) => {
             console.log(res);
@@ -82,9 +92,9 @@ class ToDoList extends Component{
     }
 
     undoTask = (id) => {
-        axios.put(endpoint + "api/undoTask" + id,{
+        axios.put(endpoint + "/api/undoTask/" + id,{
             headers:{
-                "Content-Type":"application/x-www-form-urlencoded",
+                "Content-Type":"application/x-www-form-urlencoded"
             },
         }).then((res) => {
             console.log(res)
@@ -93,9 +103,9 @@ class ToDoList extends Component{
     }
 
     deleteTask = (id) => {
-        axios.delete(endpoint + "api/deleteTask" + id,{
+        axios.delete(endpoint + "/api/deleteTask/" + id,{
             headers:{
-                "Content-Type" : "application/x-www-form-urlencoded",
+                "Content-Type" : "application/x-www-form-urlencoded"
             },
         }).then((res) => {
             console.log(res)
@@ -105,9 +115,10 @@ class ToDoList extends Component{
 
     onSubmit = () =>{
         let {task} = this.state;
+        console.log(task);
         if(task){
-            axios.post(endpoint + "/api/task",
-            {task,},
+            axios.post(endpoint + "/api/tasks",
+            {task},
             {headers:{
                 "Content-Type" : "application/x-www-form-urlencoded",
                 }
